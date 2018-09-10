@@ -8,7 +8,7 @@
 #include <math.h>   // log
 #include <stdio.h>  // vsnprintf
 #include <string.h> // strlen, strcmp, etc.
-
+#include <strings.h> // strcasecmp
 #if NV_CC_MSVC
 #include <stdarg.h> // vsnprintf
 #endif

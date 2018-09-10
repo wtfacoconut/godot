@@ -33,6 +33,7 @@
 // NV_OS_XBOX
 // NV_OS_ORBIS
 // NV_OS_IOS
+// NV_OS_
 
 #define NV_OS_STRING POSH_OS_STRING
 
@@ -74,6 +75,8 @@
 #   define NV_OS_XBOX 1
 #elif defined POSH_OS_DURANGO
 #   define NV_OS_DURANGO 1
+#elif defined POSH_OS_HORIZON
+#define NV_OS_HORIZON 1
 #else
 #   error "Unsupported OS"
 #endif
@@ -82,7 +85,7 @@
 // Is this a console OS? (i.e. connected to a TV)
 #if NV_OS_ORBIS || NV_OS_XBOX || NV_OS_DURANGO
 #   define NV_OS_CONSOLE 1
-#endif 
+#endif
 
 
 // Threading:
@@ -117,6 +120,8 @@
 #   define NV_CPU_PPC 1
 #elif defined POSH_CPU_STRONGARM
 #   define NV_CPU_ARM 1
+#elif defined POSH_CPU_AARCH64
+#define NV_CPU_AARCH64 1
 #else
 #   error "Unsupported CPU"
 #endif
@@ -350,6 +355,8 @@ template <typename T, size_t N> char (&ArraySizeHelper(T (&array)[N]))[N];
 #       include "DefsOrbis.h"
 #   elif NV_OS_MINGW
 #       include "DefsGnucWin32.h"
+#   elif NV_OS_HORIZON
+#       include "DefsHorizon.h"
 #   elif NV_OS_CYGWIN
 #       error "GCC: Cygwin not supported"
 #   else

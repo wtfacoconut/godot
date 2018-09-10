@@ -1305,6 +1305,8 @@ bool debug::isDebuggerPresent()
     info.kp_proc.p_flag = 0;
     sysctl(mib,4,&info,&size,NULL,0);
     return ((info.kp_proc.p_flag & P_TRACED) == P_TRACED);
+#elif NV_OS_HORIZON
+    return false;
 #else
     // if ppid != sid, some process spawned our app, probably a debugger. 
     return getsid(getpid()) != getppid();
