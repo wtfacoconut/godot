@@ -278,7 +278,6 @@ String DirAccessUnix::get_drive(int p_drive) {
 }
 
 Error DirAccessUnix::make_dir(String p_dir) {
-
 	GLOBAL_LOCK_FUNCTION
 
 	if (p_dir.is_rel_path())
@@ -293,7 +292,7 @@ Error DirAccessUnix::make_dir(String p_dir) {
 		return OK;
 	};
 
-	if (err == EEXIST) {
+	if (err == EEXIST || err == 1026) { // weird libnx shit, it returns the raw error code
 		return ERR_ALREADY_EXISTS;
 	};
 
