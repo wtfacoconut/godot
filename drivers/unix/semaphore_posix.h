@@ -33,7 +33,7 @@
 
 #include "core/os/semaphore.h"
 
-#if defined(UNIX_ENABLED) || defined(PTHREAD_ENABLED)
+#if (defined(UNIX_ENABLED) || defined(PTHREAD_ENABLED)) && !defined(HORIZON_ENABLED)
 
 #include <semaphore.h>
 /**
