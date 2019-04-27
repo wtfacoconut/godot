@@ -8,8 +8,8 @@
 #include "drivers/unix/net_socket_posix.h"
 #include "drivers/unix/thread_posix.h"
 #include "drivers/unix/mutex_posix.h"
-#include "drivers/switch/semaphore_switch.h"
-#include "drivers/switch/rwlock_switch.h"
+#include "drivers/unix/rw_lock_posix.h"
+#include "drivers/unix/semaphore_posix.h"
 
 #include "servers/audio_server.h"
 #include "servers/visual/visual_server_wrap_mt.h"
@@ -33,9 +33,9 @@
 void OS_Switch::initialize_core()
 {
 	ThreadPosix::make_default();
-	SemaphoreSwitch::make_default();
+	SemaphorePosix::make_default();
 	MutexPosix::make_default();
-	RWLockSwitch::make_default();
+	RWLockPosix::make_default();
 
 	FileAccess::make_default<FileAccessUnix>(FileAccess::ACCESS_RESOURCES);
 	FileAccess::make_default<FileAccessUnix>(FileAccess::ACCESS_USERDATA);
@@ -142,7 +142,7 @@ Error OS_Switch::initialize(const VideoMode &p_desired, int p_video_driver, int 
 
 	input = memnew(InputDefault);
 	input->set_emulate_mouse_from_touch(true);
-	//joypad = memnew(JoypadSwitch(input));
+	joypad = memnew(JoypadSwitch(input));
 
 	power_manager = memnew(PowerSwitch);
 
@@ -169,6 +169,7 @@ void OS_Switch::delete_main_loop()
 void OS_Switch::finalize()
 {
 	memdelete(input);
+	memdelete(joypad);
 	visual_server->finish();
 	memdelete(visual_server);
 	memdelete(power_manager);
@@ -183,7 +184,7 @@ bool OS_Switch::_check_internal_feature_support(const String &p_feature) { retur
 
 void OS_Switch::alert(const String &p_alert, const String &p_title)
 {
-	printf("got alert %s", p_alert.c_str());
+	printf("got alert %ls", p_alert.c_str());
 }
 String OS_Switch::get_stdin_string(bool p_block) { return ""; }
 Point2 OS_Switch::get_mouse_position() const
@@ -360,6 +361,8 @@ void OS_Switch::run()
 			st->set_pressed(false);
 			input->parse_input_event(st);
 		}
+
+		joypad->process_joypads();
 
 		if (Main::iteration() == true)
 			break;

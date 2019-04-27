@@ -1,5 +1,5 @@
 /*************************************************************************/
-/*  rw_lock_posix.h                                                      */
+/*  joypad_linux.h                                                       */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
@@ -28,35 +28,32 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#ifndef RWLOCKPOSIX_H
-#define RWLOCKPOSIX_H
+//author: Andreas Haas <hondres,  liugam3@gmail.com>
+#ifndef JOYPAD_SWITCH_H
+#define JOYPAD_SWITCH_H
 
-#if defined(UNIX_ENABLED) || defined(PTHREAD_ENABLED)
+#include "switch_wrapper.h"
+#include "main/input_default.h"
 
-#include "core/os/rw_lock.h"
-#include <pthread.h>
+#define JOYPADS_MAX 8
 
-class RWLockPosix : public RWLock {
-
-	pthread_rwlock_t rwlock;
-
-	static RWLock *create_func_posix();
-
+class JoypadSwitch {
 public:
-	virtual void read_lock();
-	virtual void read_unlock();
-	virtual Error read_try_lock();
-
-	virtual void write_lock();
-	virtual void write_unlock();
-	virtual Error write_try_lock();
-
-	static void make_default();
-
-	RWLockPosix();
-
-	~RWLockPosix();
+	JoypadSwitch(InputDefault *in);
+	~JoypadSwitch();
+	void process_joypads();
+	
+private:
+	typedef struct JoypadState {
+		HidControllerID id;
+		JoystickPosition l_pos;
+		JoystickPosition r_pos;
+		u64 buttons;
+	} JoypadState;
+	
+	InputDefault *input;
+	JoypadState pads[JOYPADS_MAX];
+	int button_count = 0;
 };
 
-#endif
-#endif // RWLOCKPOSIX_H
+#endif // JOYPAD_SWITCH_H

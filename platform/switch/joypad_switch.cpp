@@ -1,5 +1,5 @@
 /*************************************************************************/
-/*  rw_lock_posix.h                                                      */
+/*  joypad_linux.cpp                                                     */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
@@ -28,35 +28,74 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#ifndef RWLOCKPOSIX_H
-#define RWLOCKPOSIX_H
+#include "joypad_switch.h"
 
-#if defined(UNIX_ENABLED) || defined(PTHREAD_ENABLED)
-
-#include "core/os/rw_lock.h"
-#include <pthread.h>
-
-class RWLockPosix : public RWLock {
-
-	pthread_rwlock_t rwlock;
-
-	static RWLock *create_func_posix();
-
-public:
-	virtual void read_lock();
-	virtual void read_unlock();
-	virtual Error read_try_lock();
-
-	virtual void write_lock();
-	virtual void write_unlock();
-	virtual Error write_try_lock();
-
-	static void make_default();
-
-	RWLockPosix();
-
-	~RWLockPosix();
+static HidControllerID pad_id[JOYPADS_MAX] = {
+    CONTROLLER_P1_AUTO, CONTROLLER_PLAYER_2,
+    CONTROLLER_PLAYER_3, CONTROLLER_PLAYER_4,
+    CONTROLLER_PLAYER_5, CONTROLLER_PLAYER_6,
+    CONTROLLER_PLAYER_7, CONTROLLER_PLAYER_8
 };
 
-#endif
-#endif // RWLOCKPOSIX_H
+// from editor "Project Settings > Input Map"
+static const HidControllerKeys pad_mapping[] = {
+    KEY_B, KEY_A, KEY_Y, KEY_X,
+    KEY_L, KEY_R, KEY_ZL, KEY_ZR,
+    KEY_LSTICK, KEY_RSTICK,
+    KEY_MINUS, KEY_PLUS,
+    KEY_DUP, KEY_DDOWN, KEY_DLEFT, KEY_DRIGHT
+};
+
+JoypadSwitch::JoypadSwitch(InputDefault *in) {
+	input = in;
+	button_count = sizeof(pad_mapping) / sizeof(*pad_mapping);
+	for (int i = 0; i < JOYPADS_MAX; i++) {
+        pads[i].id = pad_id[i];
+    }
+}
+
+JoypadSwitch::~JoypadSwitch() {
+}
+
+void JoypadSwitch::process_joypads() {
+
+	u64 changed;
+    static JoypadState pad_old[JOYPADS_MAX];
+
+	for(int index = 0; index < JOYPADS_MAX; index++) {
+
+		hidJoystickRead(&pads[index].l_pos, pads[index].id, JOYSTICK_LEFT);
+		hidJoystickRead(&pads[index].r_pos, pads[index].id, JOYSTICK_RIGHT);
+		pads[index].buttons = hidKeysHeld(pads[index].id);
+
+		// Axes
+		if (pad_old[index].l_pos.dx != pads[index].l_pos.dx) {
+			// TODO: send axis events
+			pad_old[index].l_pos.dx = pads[index].l_pos.dx;
+			
+		}
+		if (pad_old[index].l_pos.dy != pads[index].l_pos.dy) {
+			// TODO: send axis events
+			pad_old[index].l_pos.dy = -pads[index].l_pos.dy;
+		}
+		if (pad_old[index].r_pos.dx != pads[index].r_pos.dx) {
+			// TODO: send axis events
+			pad_old[index].r_pos.dx = pads[index].r_pos.dx;
+		}
+		if (pad_old[index].r_pos.dy != pads[index].r_pos.dy) {
+			// TODO: send axis events
+			pad_old[index].r_pos.dy = -pads[index].r_pos.dy;
+		}
+
+		// Buttons
+		changed = pad_old[index].buttons ^ pads[index].buttons;
+		pad_old[index].buttons = pads[index].buttons;
+		if (changed) {
+			for (int i = 0; i < button_count; i++) {
+				if (changed & pad_mapping[i]) {
+					input->joy_button(index, i, (bool) (pads[index].buttons & pad_mapping[i]));
+				}
+			}
+		}
+	}
+}
