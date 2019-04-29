@@ -104,7 +104,6 @@ Ref<ImageTexture> editor_generate_icon(int p_index, bool p_convert_color, float 
 #endif
 
 void editor_register_and_generate_icons(Ref<Theme> p_theme, bool p_dark_theme = true, int p_thumb_size = 32, bool p_only_thumbs = false) {
-//#if 0
 #ifdef SVG_ENABLED
 	Dictionary dark_icon_color_dictionary;
 	if (!p_dark_theme) {
