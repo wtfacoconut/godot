@@ -47,7 +47,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - run: scripts/build-switch.sh
+    - run: bash -c 'cd $GITHUB_WORKSPACE/godot; ./scripts/build-switch.sh'
     - name: Upload Switch nro
       uses: actions/upload-artifact@v1
       with:
