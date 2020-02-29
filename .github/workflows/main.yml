@@ -43,8 +43,8 @@ jobs:
 
   build-switch:
     runs-on: ubuntu-latest
-    uses: docker://devkitpro/devkita64
-    
+    container: devkitpro/devkita64
+
     steps:
     - uses: actions/checkout@v2
     - run: scripts/build-switch.sh
