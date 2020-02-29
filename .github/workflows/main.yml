@@ -1,6 +1,8 @@
 name: CI
 
-on: [push]
+on:
+  release:
+    types: [published]
 
 jobs:
   build-editor-linux:
@@ -52,4 +54,4 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: godot-switch
-        path: bin/switch_release.nro
+        path: bin/switch_release_debug.nro
