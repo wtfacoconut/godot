@@ -6,9 +6,8 @@ sudo apt-get install build-essential scons pkg-config libx11-dev libxcursor-dev 
 
 # There's a compiler error. Let's uhhhhhh silence it.
 # TODO: Fix this.
-export CCFLAGS=-Wno-strict-aliasing
 scons platform=x11 tools=yes target=release_debug \
-      udev=yes use_static_cpp=yes progress=no -j2
+      udev=yes use_static_cpp=yes progress=no CCFLAGS=-Wno-strict-aliasing -j2
 
 # Create Linux editor AppImage
 strip "bin/godot.x11.opt.tools.64"
