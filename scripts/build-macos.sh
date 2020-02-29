@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-scons platform=osx target=release_debug
+brew update
+brew install coreutils scons yasm
 
-scons platform=osx tools=yes target=release_debug \
-      "${SCONS_FLAGS[@]}"
+scons platform=osx tools=yes target=release_debug
 
 # Create macOS editor DMG image
 mkdir artifacts
