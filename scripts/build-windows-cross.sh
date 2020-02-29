@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-apt install mingw-w64
+sudo apt-get install mingw-w64 scons
 scons platform=windows tools=yes target=release_debug -j2
