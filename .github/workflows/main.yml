@@ -10,5 +10,5 @@ jobs:
     - run: scripts/build-linux.sh
     - uses: actions/upload-artifact@v1
       with:
-        name: my-artifact
-        path: path/to/artifact
+        name: godot-linux
+        path: bin/godot.x11.opt.tools.64
