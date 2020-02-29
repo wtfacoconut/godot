@@ -44,11 +44,12 @@ jobs:
   build-switch:
     runs-on: ubuntu-latest
     uses: docker://devkitpro/devkita64
-      steps:
-      - uses: actions/checkout@v2
-      - run: scripts/build-switch.sh
-      - name: Upload Switch nro
-        uses: actions/upload-artifact@v1
-        with:
-          name: godot-switch
-          path: bin/switch_release.nro
+    
+    steps:
+    - uses: actions/checkout@v2
+    - run: scripts/build-switch.sh
+    - name: Upload Switch nro
+      uses: actions/upload-artifact@v1
+      with:
+        name: godot-switch
+        path: bin/switch_release.nro
