@@ -12,3 +12,27 @@ jobs:
       with:
         name: godot-linux
         path: bin/godot.x11.opt.tools.64
+    - uses: actions/upload-artifact@v1
+      with:
+        name: godot-linux-appimage
+        path: godot-linux-nightly-x86_64.AppImage
+
+  build-windows-cross:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - run: scripts/build-windows-cross.sh
+    - uses: actions/upload-artifact@v1
+      with:
+        name: godot-windows
+        path: bin/godot.windows.opt.tools.64.exe
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - run: scripts/build-macos.sh
+    - uses: actions/upload-artifact@v1
+      with:
+        name: godot-macos
+        path: godot-macos-nightly-x86_64.dmg
